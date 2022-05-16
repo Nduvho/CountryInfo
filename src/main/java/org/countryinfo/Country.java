@@ -1,47 +1,64 @@
 package org.countryinfo;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
 public class Country {
 
     public static void main(String[] args) {
-        try {
-            String url = "http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso";
-            URL object = new URL(url);
-            HttpURLConnection con = (HttpURLConnection) object.openConnection();
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type","text/xml; charset=utf-8");
-           // String countryCode="Canada";
-            String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-                    "<soap12:Envelope xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
-                    "  <soap12:Body>\n" +
-                    "    <ListOfCountryNamesByName xmlns=\"http://www.oorsprong.org/websamples.countryinfo\">\n" +
-                    "    </ListOfCountryNamesByName>\n" +
-                    "  </soap12:Body>\n" +
-                    "</soap12:Envelope>";
-            con.setDoOutput(true);
-            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-            wr.writeBytes(xml);
-            wr.flush();
-            wr.close();
-            String responseStatus = con.getResponseMessage();
-            System.out.println(responseStatus);
-            BufferedReader in = new BufferedReader(new InputStreamReader(
-                    con.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-            System.out.println("response:" + response);
 
-        }catch (Exception e){
-            System.out.println( e + "Invalid");
+        Boolean Running = true;
+
+        System.out.println("Welcome to the Country info data app");
+        System.out.println("\t");
+        System.out.println("This app allows you to view a list countries and currencies");
+        System.out.println("\t");
+        do{
+            Scanner sc =new Scanner(System.in);
+            System.out.println("To view the list of different data enter");
+            try {
+                int data = dataOptions(sc);
+                if (data==1)  {
+                    Utils.getCountryList();
+                    System.out.println("\t");
+                }
+                else if(data==2) {
+                    Utils.getCurrencyList();
+                    System.out.println("\t");
+                }
+                else if(data==3){
+                    Running = false;
+                }
+                else {
+                    System.out.println("Please specify a number 1-3 to choose what data you want to display ");
+                    data = dataOptions(sc);
+                }
+
+                System.out.println("Would you like to check more data on the sports app?");
+                System.out.println("Enter any integer to continue or 55 to end the program");
+                if(sc.nextInt() == 55){
+                    Running = false;
+                }
+                else
+                {
+                    Running = true;
+                }
+            }catch (InputMismatchException ex) {
+                System.out.println("Invalid input! You have to enter a number");
+            }
+        }while(Running);
+        System.out.println("Thank you. You've successfully completed the program");
+        System.out.println("\t");
+        System.out.println("You may close the session");
         }
+    private static int dataOptions(Scanner sc) {
+        int data;
+        System.out.println("1.Countries");
+        System.out.println("2.Currencies");
+
+        System.out.println("3.To end the program\t");
+        data = sc.nextInt();
+        return data;
     }
-}
+    }
+
