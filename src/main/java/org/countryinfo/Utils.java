@@ -32,7 +32,7 @@ public class Utils {
             parseXMLString(con, xml);
 
         }catch (Exception e){
-            System.out.println( "Invalid");
+            System.out.println( "Invalid" + e);
         }
     }
 
@@ -61,7 +61,7 @@ public class Utils {
         Document doc = newDocumentBuilder.parse(new ByteArrayInputStream(response.getBytes()));
         InputSource src = new InputSource();
         src.setCharacterStream(new StringReader(response));
-        for(int i=0;i<500;i++) {
+        for(int i=0;i<response.length();i++) {
             String code = doc.getElementsByTagName("m:sISOCode").item(i).getTextContent();
             String name = doc.getElementsByTagName("m:sName").item(i).getTextContent();
             System.out.println("Code: " +code);
