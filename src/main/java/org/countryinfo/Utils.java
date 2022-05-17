@@ -32,7 +32,7 @@ public class Utils {
             parseXMLString(con, xml);
 
         }catch (Exception e){
-            System.out.println( "Invalid" + e);
+            System.out.println( "Invalid");
         }
     }
 
