@@ -1,22 +1,24 @@
 package org.countryinfo;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import org.w3c.dom.Document;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class Utils {
+    public static final String URL = "http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso";
+    public static final String TYPE="Content-Type";
+    public static final String HEADER_VALUE ="text/xml; charset=utf-8";
 
     public static void getCountryList(){
+
         try {
-            String url = "http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso";
-            URL object = new URL(url);
+            URL object = new URL(URL);
             HttpURLConnection con = (HttpURLConnection) object.openConnection();
             con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type","text/xml; charset=utf-8");
-            // String countryCode="Canada";
+            con.setRequestProperty(TYPE,HEADER_VALUE);
             String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                     "<soap12:Envelope xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
                     "  <soap12:Body>\n" +
@@ -24,22 +26,27 @@ public class Utils {
                     "    </ListOfCountryNamesByName>\n" +
                     "  </soap12:Body>\n" +
                     "</soap12:Envelope>";
-            connection(con, xml);
+          String response =  apiRequest(con, xml);
+          //System.out.println("response:" + response);
+            System.out.println("Data");
 
+            DocumentBuilder newDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document parse = newDocumentBuilder.parse(new ByteArrayInputStream(response.getBytes()));
+            for(int i = 0;i<parse.toString().length();i++){
+              //  System.out.println("code" +parse.getFirstChild());
+                System.out.println(parse.getFirstChild().getTextContent());
+            }
         }catch (Exception e){
-            System.out.println( e + "Invalid");
+            System.out.println( "Invalid");
         }
-
     }
 
     public static void getCurrencyList(){
         try {
-            String url = "http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso";
-            URL object = new URL(url);
+            URL object = new URL(URL);
             HttpURLConnection con = (HttpURLConnection) object.openConnection();
             con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type","text/xml; charset=utf-8");
-            // String countryCode="Canada";
+            con.setRequestProperty(TYPE,HEADER_VALUE);
             String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                     "<soap12:Envelope xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
                     "  <soap12:Body>\n" +
@@ -47,15 +54,20 @@ public class Utils {
                     "    </ListOfCurrenciesByName>\n" +
                     "  </soap12:Body>\n" +
                     "</soap12:Envelope>";
-            connection(con, xml);
+         String response = apiRequest(con, xml);
 
+            DocumentBuilder newDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document parse = newDocumentBuilder.parse(new ByteArrayInputStream(response.getBytes()));
+            for(int i = 0;i<parse.toString().length();i++){
+                //  System.out.println("code" +parse.getFirstChild());
+                System.out.println(parse.getFirstChild().getTextContent());
+            }
         }catch (Exception e){
-            System.out.println( e + "Invalid");
+            System.out.println("Invalid");
         }
-
     }
 
-    private static void connection(HttpURLConnection con, String xml) throws IOException {
+    private static String apiRequest(HttpURLConnection con, String xml) throws IOException {
         con.setDoOutput(true);
         DataOutputStream wr = new DataOutputStream(con.getOutputStream());
         wr.writeBytes(xml);
@@ -71,6 +83,6 @@ public class Utils {
             response.append(inputLine);
         }
         in.close();
-        System.out.println("response:" + response);
+        return response.toString();
     }
 }
