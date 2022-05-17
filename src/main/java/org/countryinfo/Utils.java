@@ -6,6 +6,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class Utils {
     public static final String URL = "http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso";
@@ -26,16 +29,8 @@ public class Utils {
                     "    </ListOfCountryNamesByName>\n" +
                     "  </soap12:Body>\n" +
                     "</soap12:Envelope>";
-          String response =  apiRequest(con, xml);
-          //System.out.println("response:" + response);
-            System.out.println("Data");
+            parseXMLString(con, xml);
 
-            DocumentBuilder newDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document parse = newDocumentBuilder.parse(new ByteArrayInputStream(response.getBytes()));
-            for(int i = 0;i<parse.toString().length();i++){
-              //  System.out.println("code" +parse.getFirstChild());
-                System.out.println(parse.getFirstChild().getTextContent());
-            }
         }catch (Exception e){
             System.out.println( "Invalid");
         }
@@ -54,16 +49,24 @@ public class Utils {
                     "    </ListOfCurrenciesByName>\n" +
                     "  </soap12:Body>\n" +
                     "</soap12:Envelope>";
-         String response = apiRequest(con, xml);
-
-            DocumentBuilder newDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document parse = newDocumentBuilder.parse(new ByteArrayInputStream(response.getBytes()));
-            for(int i = 0;i<parse.toString().length();i++){
-                //  System.out.println("code" +parse.getFirstChild());
-                System.out.println(parse.getFirstChild().getTextContent());
-            }
+            parseXMLString(con, xml);
         }catch (Exception e){
             System.out.println("Invalid");
+        }
+    }
+
+    private static void parseXMLString(HttpURLConnection con, String xml) throws IOException, ParserConfigurationException, SAXException {
+        String response = apiRequest(con, xml);
+        DocumentBuilder newDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = newDocumentBuilder.parse(new ByteArrayInputStream(response.getBytes()));
+        InputSource src = new InputSource();
+        src.setCharacterStream(new StringReader(response));
+        for(int i=0;i<500;i++) {
+            String code = doc.getElementsByTagName("m:sISOCode").item(i).getTextContent();
+            String name = doc.getElementsByTagName("m:sName").item(i).getTextContent();
+            System.out.println("Code: " +code);
+            System.out.println("Name: " + name);
+            System.out.println("\t");
         }
     }
 
@@ -78,7 +81,7 @@ public class Utils {
         BufferedReader in = new BufferedReader(new InputStreamReader(
                 con.getInputStream()));
         String inputLine;
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
         while ((inputLine = in.readLine()) != null) {
             response.append(inputLine);
         }
