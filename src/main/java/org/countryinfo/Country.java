@@ -19,11 +19,11 @@ public class Country {
             try {
                 int data = dataOptions(sc);
                 if (data==1)  {
-                    Utils.getCountryList();
+                 Utils.getCountryList();
                     System.out.println("\t");
                 }
                 else if(data==2) {
-                    Utils.getCurrencyList();
+                  Utils.getCurrencyList();
                     System.out.println("\t");
                 }
                 else if(data==3){
