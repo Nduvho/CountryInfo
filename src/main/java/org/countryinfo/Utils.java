@@ -3,6 +3,7 @@ package org.countryinfo;
 import okhttp3.*;
 import org.countryinfo.listcountry.CountryResponse;
 import org.countryinfo.listcountry.Countries;
+import org.countryinfo.listcurrency.Currencies;
 import org.countryinfo.listcurrency.CurrencyResponse;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
@@ -205,7 +206,7 @@ public class Utils {
     }
 
     public static void getCurrencyList(){
-        Countries listOfCurrency = new Countries();
+        Currencies listOfCurrency = new Currencies();
 
         String object = Utils.marshallObject(listOfCurrency);
         String stringObject = new Utils().createGenericSoapString(object);
